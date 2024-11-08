@@ -1,0 +1,22 @@
+Initializing AMReX (24.11-10-g2c6e8094ee40)...
+MPI initialized with 1 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+CUDA initialized with 1 device.
+AMReX (24.11-10-g2c6e8094ee40) initialized
+
+ FFT size: 256 256 256   # of proc. 1
+
+  armex pencil time: 0.00339383
+  amrex plane  time: 0.002901108667
+  heffte       time: 0.09845707033
+
+Total GPU global memory (MB) spread across MPI: [40339 ... 40339]
+Free  GPU global memory (MB) spread across MPI: [9653 ... 9653]
+[The         Arena] space (MB) allocated spread across MPI: [30254 ... 30254]
+[The         Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The Managed Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The  Pinned Arena] space (MB) used      spread across MPI: [0 ... 0]
+AMReX (24.11-10-g2c6e8094ee40) finalized
