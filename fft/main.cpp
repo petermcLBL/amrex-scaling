@@ -33,9 +33,9 @@ double test_amrex_pencil (Box const& domain, MultiFab& mf, cMultiFab& cmf)
     return (t1-t0) / double(ntests);
 }
 
-double test_amrex_plane (Box const& domain, MultiFab& mf, cMultiFab& cmf)
+double test_amrex_slab (Box const& domain, MultiFab& mf, cMultiFab& cmf)
 {
-    FFT::R2C<Real,FFT::Direction::both,FFT::DomainStrategy::plane> r2c(domain);
+    FFT::R2C<Real,FFT::Direction::both,FFT::DomainStrategy::slab> r2c(domain);
     r2c.forward(mf, cmf);
     r2c.backward(cmf, mf);
 
@@ -143,9 +143,9 @@ int main (int argc, char* argv[])
         cMultiFab cmf(cba, dm, 1, 0);
 
         auto t_amrex_pencil = test_amrex_pencil(domain, mf, cmf);
-        auto t_amrex_plane = test_amrex_plane(domain, mf, cmf);
+        auto t_amrex_slab = test_amrex_slab(domain, mf, cmf);
         amrex::Print() << "  armex pencil time: " << t_amrex_pencil << "\n"
-                       << "  amrex plane  time: " << t_amrex_plane << "\n";
+                       << "  amrex slab   time: " << t_amrex_slab << "\n";
 
 #ifdef USE_HEFFTE
         auto t_heffte = test_heffte(domain, mf, cmf);
