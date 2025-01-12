@@ -7,6 +7,10 @@
 #include <heffte.h>
 #endif
 
+#if defined(USE_FFTX)
+#include <fftx_mpi.hpp>
+#endif
+
 using namespace amrex;
 
 namespace {
@@ -19,7 +23,7 @@ double test_amrex_pencil (Box const& domain, MultiFab& mf, cMultiFab& cmf)
     r2c.forward(mf, cmf);
     r2c.backward(cmf, mf);
 
-    Gpu::synchronize();    
+    Gpu::synchronize();
     double t0 = amrex::second();
 
     for (int itest = 0; itest < ntests; ++itest) {
@@ -39,7 +43,7 @@ double test_amrex_slab (Box const& domain, MultiFab& mf, cMultiFab& cmf)
     r2c.forward(mf, cmf);
     r2c.backward(cmf, mf);
 
-    Gpu::synchronize();    
+    Gpu::synchronize();
     double t0 = amrex::second();
 
     for (int itest = 0; itest < ntests; ++itest) {
@@ -80,7 +84,7 @@ double test_heffte (Box const& /*domain*/, MultiFab& mf, cMultiFab& cmf)
     fft.forward(fab.dataPtr(), (heffte_complex*)cfab.dataPtr());
     fft.backward((heffte_complex*)cfab.dataPtr(), fab.dataPtr());
 
-    Gpu::synchronize();    
+    Gpu::synchronize();
     double t0 = amrex::second();
 
     for (int itest = 0; itest < ntests; ++itest) {
@@ -90,6 +94,52 @@ double test_heffte (Box const& /*domain*/, MultiFab& mf, cMultiFab& cmf)
 
     Gpu::synchronize();
     double t1 = amrex::second();
+
+    return (t1-t0) / double(ntests);
+}
+#endif
+
+#ifdef USE_FFTX
+double test_fftx (Box const& domain, MultiFab& mf, cMultiFab& cmf)
+{
+    auto& fab = mf[ParallelDescriptor::MyProc()];
+    auto& cfab = cmf[ParallelDescriptor::MyProc()];
+
+    int batch = 1;
+    bool is_embedded = false;
+    bool is_complex = false;
+    fftx_plan plan = fftx_plan_distributed_1d(ParallelDescriptor::NProcs(),
+                                              domain.length(0),
+                                              domain.length(1),
+                                              domain.length(2),
+                                              batch, is_embedded, is_complex);
+
+    // The code here is likely wrong, because ...
+
+    // The arrays have the Fortran column-major order. For both mf and cmf, the order is
+    // (x,y,z) and the domain decomposition is in the z-direction.
+
+    // The comments in fftx/examples/3DDFT_mpi/test3DDFT_mpi_1D.cpp seem to suggest that
+    // the output complex array has the order of (z,x,y) and the domain decompostion is in
+    // the x-direction.
+
+    // How do we fix it?
+
+    fftx_execute_1d(plan, (double*)cfab.dataPtr(), fab.dataPtr(), DEVICE_FFT_FORWARD);
+    fftx_execute_1d(plan, fab.dataPtr(), (double*)cfab.dataPtr(), DEVICE_FFT_INVERSE);
+
+    Gpu::synchronize();
+    double t0 = amrex::second();
+
+    for (int itest = 0; itest < ntests; ++itest) {
+        fftx_execute_1d(plan, (double*)cfab.dataPtr(), fab.dataPtr(), DEVICE_FFT_FORWARD);
+        fftx_execute_1d(plan, fab.dataPtr(), (double*)cfab.dataPtr(), DEVICE_FFT_INVERSE);
+    }
+
+    Gpu::synchronize();
+    double t1 = amrex::second();
+
+    fftx_plan_destroy(plan);
 
     return (t1-t0) / double(ntests);
 }
@@ -118,7 +168,15 @@ int main (int argc, char* argv[])
                        << "  # of proc. " << ParallelDescriptor::NProcs() << "\n\n";
 
         Box domain(IntVect(0),IntVect(n_cell_x-1,n_cell_y-1,n_cell_z-1));
+#if defined(USE_FFTX)
+        // FFTX support 1d or 2d grid. 1D grid distribution assumes that all p processors
+        // are logically organized into a linear array. The entire 3D FFT is distributed
+        // along the Z dimension of the FFT. Using this processor grid, the X dimension of
+        // the FFT is assumed to be laid out consecutively in local memory.
+        BoxArray ba = amrex::decompose(domain, ParallelDescriptor::NProcs(), {false,false,true});
+#else
         BoxArray ba = amrex::decompose(domain, ParallelDescriptor::NProcs(), {true,true,true});
+#endif
         AMREX_ALWAYS_ASSERT(ba.size() == ParallelDescriptor::NProcs());
         DistributionMapping dm = FFT::detail::make_iota_distromap(ba.size());
 
@@ -137,7 +195,11 @@ int main (int argc, char* argv[])
         Gpu::streamSynchronize();
 
         Box cdomain(IntVect(0), IntVect(n_cell_x/2+1, n_cell_y-1, n_cell_z-1));
+#if defined(USE_FFTX)
+        BoxArray cba = amrex::decompose(cdomain, ParallelDescriptor::NProcs(), {false,false,true});
+#else
         BoxArray cba = amrex::decompose(cdomain, ParallelDescriptor::NProcs(), {true,true,true});
+#endif
         AMREX_ALWAYS_ASSERT(cba.size() == ParallelDescriptor::NProcs());
 
         cMultiFab cmf(cba, dm, 1, 0);
@@ -150,6 +212,11 @@ int main (int argc, char* argv[])
 #ifdef USE_HEFFTE
         auto t_heffte = test_heffte(domain, mf, cmf);
         amrex::Print() << "  heffte       time: " << t_heffte << "\n";
+#endif
+
+#ifdef USE_FFTX
+        auto t_fftx = test_fftx(domain, mf, cmf);
+        amrex::Print() << "  fftx         time: " << t_fftx << "\n";
 #endif
 
         amrex::Print() << "\n";
