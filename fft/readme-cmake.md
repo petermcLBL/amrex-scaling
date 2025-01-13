@@ -8,5 +8,5 @@
 * build ffttest in amrex-scaling/fft
   $ mkdir build
   $ cd build
-  $ cmake .. -DAMReX_ROOT=${AMREX_HOME}/installdir -DFFTX_HOME=${FFTX_HOME} -DSPIRAL_HOME=${SPIRAL_HOME} -DENABLE_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=80
+  $ cmake .. -DAMReX_ROOT=${AMREX_HOME}/installdir -DFFTX_HOME=${FFTX_HOME} -DSPIRAL_HOME=${SPIRAL_HOME} -DENABLE_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=80 -DUSE_FFTX=[ON|OFF]
   $ make -j8

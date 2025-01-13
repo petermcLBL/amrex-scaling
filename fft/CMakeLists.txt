@@ -39,10 +39,12 @@ target_link_libraries(ffttest PRIVATE AMReX::amrex)
 
 target_compile_features(ffttest PRIVATE cxx_std_17)
 
-add_compile_definitions(USE_FFTX)
-include ( "${FFTX_HOME}/CMakeIncludes/FFTXCmakeFunctions.cmake" )
-FFTX_add_includes_libs_to_target ( ffttest )
-target_include_directories(ffttest PRIVATE ${SPIRAL_HOME}/profiler/targets/include)
+if (USE_FFTX)
+  add_compile_definitions(USE_FFTX)
+  include ( "${FFTX_HOME}/CMakeIncludes/FFTXCmakeFunctions.cmake" )
+  FFTX_add_includes_libs_to_target ( ffttest )
+  target_include_directories(ffttest PRIVATE ${SPIRAL_HOME}/profiler/targets/include)
+endif()
 
 get_target_property(ffttest_sources ffttest SOURCES)
 list(FILTER ffttest_sources INCLUDE REGEX "\\.cpp$")
