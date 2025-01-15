@@ -30,10 +30,10 @@ ifeq ($(USE_HEFFTE),TRUE)
 endif
 
 ifeq ($(USE_FFTX),TRUE)
-  DEFINES += -DUSE_FFTX
+  DEFINES += -DUSE_FFTX -DFFTX_CUDA
   INCLUDE_LOCATIONS += $(FFTX_HOME)/include $(SPIRAL_HOME)/profiler/targets/include
-  LIBRARY_LOCATIONS += $(FFTX_HOME)/lib
-  LIBRARIES += -Wl,--rpath=$(FFTX_HOME)/lib -lfftx_mpi
+  LIBRARY_LOCATIONS += $(FFTX_HOME)/lib $(CUDATOOLKIT_HOME)/lib64
+  LIBRARIES += -Wl,--copy-dt-needed-entries -Wl,-rpath=$(FFTX_HOME)/lib -lfftx_mpi -lfftx_mddft_gpu -lfftx_imddft_gpu -lfftx_mdprdft_gpu -lfftx_imdprdft_gpu -lfftx_dftbat_gpu -lfftx_idftbat_gpu -lfftx_prdftbat_gpu -lfftx_iprdftbat_gpu -lfftx_rconv_gpu -lcudart
 endif
 
 include ./Make.package
