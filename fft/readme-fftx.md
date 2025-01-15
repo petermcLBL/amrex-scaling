@@ -8,14 +8,14 @@ module load openmpi
 module load python
 ```
 
-Set AMREX_HOME to home directory of AMReX after installing it.
+Set `AMREX_HOME` to home directory of AMReX after installing it.
 
-Set SPIRAL_HOME to home directory of
+Set `SPIRAL_HOME` to home directory of
 [SPIRAL](https://www.github.com/spiral-software/spiral-software)
 after installing it.  Use the `develop` branch of SPIRAL and of associated
 SPIRAL packages that are required for FFTX (see below).
 
-Set FFTX_HOME to home directory of
+Set `FFTX_HOME` to home directory of
 [FFTX](https://www.github.com/spiral-software/fftx)
 after installing it.  Use the `develop` branch.
 
