@@ -14,47 +14,67 @@
 using namespace amrex;
 
 namespace {
-    constexpr int ntests = 3;
+    constexpr int ntests = 10;
 }
 
 double test_amrex_pencil (Box const& domain, MultiFab& mf, cMultiFab& cmf)
 {
     FFT::R2C<Real,FFT::Direction::both,FFT::DomainStrategy::pencil> r2c(domain);
+
+    Gpu::synchronize();
+    double t00 = amrex::second();
+
     r2c.forward(mf, cmf);
     r2c.backward(cmf, mf);
 
     Gpu::synchronize();
     double t0 = amrex::second();
 
+    amrex::Print() << "    Warm-up: " << t0-t00 << "\n";
+
+    double tt = 0;
+
     for (int itest = 0; itest < ntests; ++itest) {
+        double ta = amrex::second();
         r2c.forward(mf, cmf);
         r2c.backward(cmf, mf);
+        Gpu::synchronize();
+        double tb = amrex::second();
+        tt += (tb-ta);
+        amrex::Print() << "    Test # " << itest << ": " << tb-ta << "\n";
     }
 
-    Gpu::synchronize();
-    double t1 = amrex::second();
-
-    return (t1-t0) / double(ntests);
+    return tt / double(ntests);
 }
 
 double test_amrex_slab (Box const& domain, MultiFab& mf, cMultiFab& cmf)
 {
     FFT::R2C<Real,FFT::Direction::both,FFT::DomainStrategy::slab> r2c(domain);
+
+    Gpu::synchronize();
+    double t00 = amrex::second();
+
     r2c.forward(mf, cmf);
     r2c.backward(cmf, mf);
 
     Gpu::synchronize();
     double t0 = amrex::second();
 
+    amrex::Print() << "    Warm-up: " << t0-t00 << "\n";
+
+    double tt = 0;
+
     for (int itest = 0; itest < ntests; ++itest) {
+        double ta = amrex::second();
         r2c.forward(mf, cmf);
         r2c.backward(cmf, mf);
+        Gpu::synchronize();
+        double tb = amrex::second();
+        tt += (tb-ta);
+        amrex::Print() << "    Test # " << itest << ": " << tb-ta << "\n";
     }
 
-    Gpu::synchronize();
-    double t1 = amrex::second();
-
-    return (t1-t0) / double(ntests);
+    return tt / double(ntests);
 }
 
 #ifdef USE_HEFFTE
@@ -125,15 +145,24 @@ double test_fftx (Box const& domain, MultiFab& mf, cMultiFab& cmf)
 
     // How do we fix it?
 
+    Gpu::synchronize();
+    double t00 = amrex::second();
+
     fftx_execute_1d(plan, (double*)cfab.dataPtr(), fab.dataPtr(), DEVICE_FFT_FORWARD);
     fftx_execute_1d(plan, fab.dataPtr(), (double*)cfab.dataPtr(), DEVICE_FFT_INVERSE);
 
     Gpu::synchronize();
     double t0 = amrex::second();
 
+    amrex::Print() << "    Warm-up: " << t0-t00 << "\n";
+
     for (int itest = 0; itest < ntests; ++itest) {
+        double ta = amrex::second();
         fftx_execute_1d(plan, (double*)cfab.dataPtr(), fab.dataPtr(), DEVICE_FFT_FORWARD);
         fftx_execute_1d(plan, fab.dataPtr(), (double*)cfab.dataPtr(), DEVICE_FFT_INVERSE);
+        Gpu::synchronize();
+        double tb = amrex::second();
+        amrex::Print() << "    Test # " << itest << ": " << tb-ta << "\n";
     }
 
     Gpu::synchronize();
