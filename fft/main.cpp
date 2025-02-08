@@ -17,10 +17,9 @@ namespace {
     constexpr int ntests = 10;
 }
 
-double test_amrex_pencil (Box const& domain, MultiFab& mf, cMultiFab& cmf)
+template <typename F>
+double test_amrex (F& r2c, MultiFab& mf, cMultiFab& cmf)
 {
-    FFT::R2C<Real,FFT::Direction::both,FFT::DomainStrategy::pencil> r2c(domain);
-
     Gpu::synchronize();
     double t00 = amrex::second();
 
@@ -47,34 +46,24 @@ double test_amrex_pencil (Box const& domain, MultiFab& mf, cMultiFab& cmf)
     return tt / double(ntests);
 }
 
+double test_amrex_auto (Box const& domain, MultiFab& mf, cMultiFab& cmf)
+{
+    FFT::R2C<Real,FFT::Direction::both> r2c(domain);
+    return test_amrex(r2c, mf, cmf);
+}
+
+double test_amrex_pencil (Box const& domain, MultiFab& mf, cMultiFab& cmf)
+{
+    FFT::R2C<Real,FFT::Direction::both> r2c
+        (domain, FFT::Info{}.setDomainStrategy(FFT::DomainStrategy::pencil));
+    return test_amrex(r2c, mf, cmf);
+}
+
 double test_amrex_slab (Box const& domain, MultiFab& mf, cMultiFab& cmf)
 {
-    FFT::R2C<Real,FFT::Direction::both,FFT::DomainStrategy::slab> r2c(domain);
-
-    Gpu::synchronize();
-    double t00 = amrex::second();
-
-    r2c.forward(mf, cmf);
-    r2c.backward(cmf, mf);
-
-    Gpu::synchronize();
-    double t0 = amrex::second();
-
-    amrex::Print() << "    Warm-up: " << t0-t00 << "\n";
-
-    double tt = 0;
-
-    for (int itest = 0; itest < ntests; ++itest) {
-        double ta = amrex::second();
-        r2c.forward(mf, cmf);
-        r2c.backward(cmf, mf);
-        Gpu::synchronize();
-        double tb = amrex::second();
-        tt += (tb-ta);
-        amrex::Print() << "    Test # " << itest << ": " << tb-ta << "\n";
-    }
-
-    return tt / double(ntests);
+    FFT::R2C<Real,FFT::Direction::both> r2c
+        (domain, FFT::Info{}.setDomainStrategy(FFT::DomainStrategy::slab));
+    return test_amrex(r2c, mf, cmf);
 }
 
 #ifdef USE_HEFFTE
@@ -233,9 +222,11 @@ int main (int argc, char* argv[])
 
         cMultiFab cmf(cba, dm, 1, 0);
 
+        auto t_amrex_auto = test_amrex_auto(domain, mf, cmf);
         auto t_amrex_pencil = test_amrex_pencil(domain, mf, cmf);
         auto t_amrex_slab = test_amrex_slab(domain, mf, cmf);
-        amrex::Print() << "  armex pencil time: " << t_amrex_pencil << "\n"
+        amrex::Print() << "  armex atuo   time: " << t_amrex_auto << "\n"
+                       << "  armex pencil time: " << t_amrex_pencil << "\n"
                        << "  amrex slab   time: " << t_amrex_slab << "\n";
 
 #ifdef USE_HEFFTE
