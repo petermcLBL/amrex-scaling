@@ -1,0 +1,35 @@
+srun: Step created for StepId=35643580.1
+Initializing AMReX (25.02-8-gcebfb9e3f6f4)...
+MPI initialized with 4 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+Multiple GPUs are visible to each MPI rank. This is usually not an issue. But this may lead to incorrect or suboptimal rank-to-GPU mapping.!
+CUDA initialized with 4 devices.
+AMReX (25.02-8-gcebfb9e3f6f4) initialized
+
+ FFT size: 128 64 64  batch size: 10  # of proc. 4
+
+    Warm-up: 0.013495605
+    Test # 0: 0.001104816
+    Test # 1: 0.001151406
+    Test # 2: 0.00104444
+    Test # 3: 0.001073956
+    Test # 4: 0.001055121
+    Test # 5: 0.001082704
+    Test # 6: 0.001074818
+    Test # 7: 0.001074728
+    Test # 8: 0.001063536
+    Test # 9: 0.00108093
+  armex batched fft time: 0.0010806455
+
+Total GPU global memory (MB) spread across MPI: [40326 ... 40326]
+Free  GPU global memory (MB) spread across MPI: [9634 ... 9634]
+[The         Arena] space (MB) allocated spread across MPI: [30244 ... 30244]
+[The         Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The Managed Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The  Pinned Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The   Comms Arena] space (MB) allocated spread across MPI: [16 ... 16]
+[The   Comms Arena] space (MB) used      spread across MPI: [0 ... 0]
+AMReX (25.02-8-gcebfb9e3f6f4) finalized

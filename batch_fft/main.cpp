@@ -55,15 +55,6 @@ double test_amrex_auto (Box const& domain, MultiFab& mf, cMultiFab& cmf)
     return test_amrex(r2c, mf, cmf);
 }
 
-double test_amrex_pencil (Box const& domain, MultiFab& mf, cMultiFab& cmf)
-{
-    FFT::Info info{};
-    info.setDomainStrategy(FFT::DomainStrategy::pencil);
-    info.setBatchSize(mf.nComp());
-    FFT::R2C<Real,FFT::Direction::both> r2c(domain, info);
-    return test_amrex(r2c, mf, cmf);
-}
-
 int main (int argc, char* argv[])
 {
     static_assert(AMREX_SPACEDIM == 3);
@@ -83,6 +74,7 @@ int main (int argc, char* argv[])
             AMREX_D_TERM(pp.query("n_cell_x", n_cell_x);,
                          pp.query("n_cell_y", n_cell_y);,
                          pp.query("n_cell_z", n_cell_z));
+            pp.query("batch_size", batch_size);
         }
 
         amrex::Print() << "\n FFT size: " << n_cell_x << " " << n_cell_y << " " << n_cell_z
@@ -119,9 +111,7 @@ int main (int argc, char* argv[])
         cMultiFab cmf(cba, dm, batch_size, 0);
 
         auto t_amrex_auto = test_amrex_auto(domain, mf, cmf);
-        auto t_amrex_pencil = test_amrex_pencil(domain, mf, cmf);
-        amrex::Print() << "  armex atuo   time: " << t_amrex_auto << "\n"
-                       << "  armex pencil time: " << t_amrex_pencil << "\n\n";
+        amrex::Print() << "  armex batched fft time: " << t_amrex_auto << "\n\n";
     }
     amrex::Finalize();
 }

@@ -11,7 +11,6 @@
 
 export MPICH_GPU_SUPPORT_ENABLED=1 
 export SLURM_CPU_BIND="cores"
-export MPICH_OFI_NIC_POLICY=GPU
 
 srun -n 1 ../../old-order.ex >& run-.25-oldorder.ou
 srun -n 1 ../../new-order.ex >& run-.25-neworder.ou
