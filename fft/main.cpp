@@ -212,7 +212,7 @@ int main (int argc, char* argv[])
         });
         Gpu::streamSynchronize();
 
-        Box cdomain(IntVect(0), IntVect(n_cell_x/2+1, n_cell_y-1, n_cell_z-1));
+        Box cdomain(IntVect(0), IntVect(n_cell_x/2, n_cell_y-1, n_cell_z-1));
 #if defined(USE_FFTX)
         BoxArray cba = amrex::decompose(cdomain, ParallelDescriptor::NProcs(), {false,false,true});
 #else
