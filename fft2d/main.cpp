@@ -38,11 +38,20 @@ double test_amrex (F& r2c, MultiFab& mf, cMultiFab& cmf)
     return tt / double(ntests);
 }
 
-double test_amrex_auto (Box const& domain, MultiFab& mf, cMultiFab& cmf)
+double test_amrex_pencil (Box const& domain, MultiFab& mf, cMultiFab& cmf)
 {
     FFT::Info info{};
-    info.setDomainStrategy(FFT::DomainStrategy::automatic);
-    info.setBatchSize(mf.nComp());
+    info.setTwoDMode(true);
+    info.setDomainStrategy(FFT::DomainStrategy::pencil);
+    FFT::R2C<Real,FFT::Direction::both> r2c(domain, info);
+    return test_amrex(r2c, mf, cmf);
+}
+
+double test_amrex_slab (Box const& domain, MultiFab& mf, cMultiFab& cmf)
+{
+    FFT::Info info{};
+    info.setTwoDMode(true);
+    info.setDomainStrategy(FFT::DomainStrategy::slab);
     FFT::R2C<Real,FFT::Direction::both> r2c(domain, info);
     return test_amrex(r2c, mf, cmf);
 }
@@ -55,22 +64,18 @@ int main (int argc, char* argv[])
     {
         BL_PROFILE("main");
 
-        AMREX_D_TERM(int n_cell_x = 64;,
-                     int n_cell_y = 64;,
-                     int n_cell_z = 64);
-
-        int batch_size = 100;
+        AMREX_D_TERM(int n_cell_x = 256;,
+                     int n_cell_y = 256;,
+                     int n_cell_z = 256);
 
         {
             ParmParse pp;
             AMREX_D_TERM(pp.query("n_cell_x", n_cell_x);,
                          pp.query("n_cell_y", n_cell_y);,
                          pp.query("n_cell_z", n_cell_z));
-            pp.query("batch_size", batch_size);
         }
 
-        amrex::Print() << "\n FFT size: " << n_cell_x << " " << n_cell_y << " " << n_cell_z
-                       << "  batch size: " << batch_size
+        amrex::Print() << "\n FFT size: " << n_cell_x << " " << n_cell_y << " " << n_cell_z << " "
                        << "  # of proc. " << ParallelDescriptor::NProcs() << "\n\n";
 
         Box domain(IntVect(0),IntVect(n_cell_x-1,n_cell_y-1,n_cell_z-1));
@@ -81,18 +86,15 @@ int main (int argc, char* argv[])
 
         GpuArray<Real,3> dx{1._rt/Real(n_cell_x), 1._rt/Real(n_cell_y), 1._rt/Real(n_cell_z)};
 
-        MultiFab mf(ba, dm, batch_size, 0);
+        MultiFab mf(ba, dm, 1, 0);
         auto const& ma = mf.arrays();
         ParallelFor(mf, [=] AMREX_GPU_DEVICE (int b, int i, int j, int k)
         {
             AMREX_D_TERM(Real x = (i+0.5_rt) * dx[0] - 0.5_rt;,
                          Real y = (j+0.5_rt) * dx[1] - 0.5_rt;,
                          Real z = (k+0.5_rt) * dx[2] - 0.5_rt);
-            auto tmp = std::exp(-10._rt*
+            ma[b](i,j,k) = std::exp(-10._rt*
                 (AMREX_D_TERM(x*x*1.05_rt, + y*y*0.90_rt, + z*z)));
-            for (int n = 0; n < batch_size; ++n) {
-                ma[b](i,j,k) = tmp + Real(batch_size);
-            }
         });
         Gpu::streamSynchronize();
 
@@ -100,10 +102,12 @@ int main (int argc, char* argv[])
         BoxArray cba = amrex::decompose(cdomain, ParallelDescriptor::NProcs(), {true,true,true});
         AMREX_ALWAYS_ASSERT(cba.size() == ParallelDescriptor::NProcs());
 
-        cMultiFab cmf(cba, dm, batch_size, 0);
+        cMultiFab cmf(cba, dm, 1, 0);
 
-        auto t_amrex_auto = test_amrex_auto(domain, mf, cmf);
-        amrex::Print() << "  armex batched fft time: " << t_amrex_auto << "\n\n";
+        auto t_amrex_pencil = test_amrex_pencil(domain, mf, cmf);
+        auto t_amrex_slab = test_amrex_slab(domain, mf, cmf);
+        amrex::Print() << "  armex pencil time: " << t_amrex_pencil << "\n"
+                       << "  amrex slab   time: " << t_amrex_slab << "\n\n";
     }
     amrex::Finalize();
 }
