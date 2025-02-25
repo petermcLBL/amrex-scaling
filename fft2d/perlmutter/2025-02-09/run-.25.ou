@@ -1,0 +1,45 @@
+Initializing AMReX (25.02-8-g8107a343c34d)...
+MPI initialized with 1 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+CUDA initialized with 1 device.
+AMReX (25.02-8-g8107a343c34d) initialized
+
+ FFT size: 256 256 256   # of proc. 1
+
+    Warm-up: 0.002201599
+    Test # 0: 0.002115983
+    Test # 1: 0.002104402
+    Test # 2: 0.002104031
+    Test # 3: 0.002109472
+    Test # 4: 0.00210872
+    Test # 5: 0.002116054
+    Test # 6: 0.002106866
+    Test # 7: 0.002101716
+    Test # 8: 0.002104251
+    Test # 9: 0.002109101
+    Warm-up: 0.001688337
+    Test # 0: 0.001653679
+    Test # 1: 0.001651956
+    Test # 2: 0.001652718
+    Test # 3: 0.00164878
+    Test # 4: 0.001649641
+    Test # 5: 0.001648589
+    Test # 6: 0.001649672
+    Test # 7: 0.001651615
+    Test # 8: 0.001650523
+    Test # 9: 0.001651805
+  armex pencil time: 0.0021080596
+  amrex slab   time: 0.0016508978
+
+Total GPU global memory (MB) spread across MPI: [40326 ... 40326]
+Free  GPU global memory (MB) spread across MPI: [9642 ... 9642]
+[The         Arena] space (MB) allocated spread across MPI: [30244 ... 30244]
+[The         Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The Managed Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The  Pinned Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The   Comms Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The   Comms Arena] space (MB) used      spread across MPI: [0 ... 0]
+AMReX (25.02-8-g8107a343c34d) finalized

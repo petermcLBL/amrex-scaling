@@ -1,0 +1,46 @@
+Initializing AMReX (25.01-9-ge761abff95af)...
+MPI initialized with 256 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+Multiple GPUs are visible to each MPI rank. This is usually not an issue. But this may lead to incorrect or suboptimal rank-to-GPU mapping.!
+CUDA initialized with 256 devices.
+AMReX (25.01-9-ge761abff95af) initialized
+
+ FFT size: 2048 2048 1024   # of proc. 256
+
+    Warm-up: 0.198992461
+    Test # 0: 0.145955607
+    Test # 1: 0.138246319
+    Test # 2: 0.150630625
+    Test # 3: 0.155958334
+    Test # 4: 0.142216295
+    Test # 5: 0.144459337
+    Test # 6: 0.147973553
+    Test # 7: 0.136864169
+    Test # 8: 0.158426029
+    Test # 9: 0.150005097
+    Warm-up: 0.306012906
+    Test # 0: 0.109757873
+    Test # 1: 0.116387826
+    Test # 2: 0.125136912
+    Test # 3: 0.131390209
+    Test # 4: 0.127509354
+    Test # 5: 0.119704552
+    Test # 6: 0.123678866
+    Test # 7: 0.126240243
+    Test # 8: 0.129974535
+    Test # 9: 0.13316208
+  armex pencil time: 0.1470735365
+  amrex slab   time: 0.124294245
+
+Total GPU global memory (MB) spread across MPI: [40326 ... 40326]
+Free  GPU global memory (MB) spread across MPI: [7281 ... 9386]
+[The         Arena] space (MB) allocated spread across MPI: [30244 ... 30244]
+[The         Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The Managed Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The  Pinned Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The   Comms Arena] space (MB) allocated spread across MPI: [264 ... 1227]
+[The   Comms Arena] space (MB) used      spread across MPI: [0 ... 0]
+AMReX (25.01-9-ge761abff95af) finalized

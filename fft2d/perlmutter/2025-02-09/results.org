@@ -1,0 +1,14 @@
+
+* Weak scaling on Perlmutter A100 40GB
+  4 GPUs per node, 256^3 cells per GPU
+  2d mode, z-direction is the batch direction
+| # nodes | # cells            |  pencil |    slab |
+|---------+--------------------+---------+---------|
+|     1/4 | 256^3              | 2.11e-3 | 1.65e-3 |
+|       1 | 512 x 512 x 256    | 1.07e-2 | 8.68e-3 |
+|       4 | 1024 x 512 x 512   | 3.54e-2 | 3.78e-2 |
+|      16 | 1024^3             | 7.54e-2 | 6.16e-2 |
+|      64 | 2048 x 2048 x 1024 | 1.02e-1 | 8.02e-2 |
+|     256 | 4096 x 2048 x 2048 | 1.26e-1 | 8.32e-2 |
+
+
