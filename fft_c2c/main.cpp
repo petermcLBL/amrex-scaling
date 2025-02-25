@@ -58,8 +58,8 @@ double test_fftx (Box const& domain, cMultiFab const& mf, cMultiFab& mf2)
     auto& fab2 = mf2[ParallelDescriptor::MyProc()];
 
     amrex::Print(Print::AllProcs) << "rank " << ParallelDescriptor::MyProc()
-                                  << " fabs on boxes "
-                                  << fab.box() << " and " << fab2.box() << std::endl;
+                                  << " complex on " << fab.box()
+                                  << " and " << fab2.box() << "\n";
       
     int batch = 1;
     bool is_embedded = false;
@@ -140,20 +140,10 @@ int main (int argc, char* argv[])
 
         Box domain(IntVect(0),IntVect(n_cell_x-1,n_cell_y-1,n_cell_z-1));
         BoxArray ba = amrex::decompose(domain, ParallelDescriptor::NProcs(), {false,false,true});
+        amrex::Print() << "complex data on boxes " << ba << "\n";
 
         AMREX_ALWAYS_ASSERT(ba.size() == ParallelDescriptor::NProcs());
         DistributionMapping dm = FFT::detail::make_iota_distromap(ba.size());
-
-        for (int ibox = 0; ibox < ParallelDescriptor::NProcs(); ibox++)
-          {
-            const Box& bx = ba[ibox];
-            const int* lo = bx.loVect();
-            const int* hi = bx.hiVect();
-            amrex::Print() << "box " << ibox << " ["
-                           << lo[0] << ":" << hi[0] << ", "
-                           << lo[1] << ":" << hi[1] << ", "
-                           << lo[2] << ":" << hi[2] << "]\n";
-          }
 
         GpuArray<Real,3> dx{1._rt/Real(n_cell_x), 1._rt/Real(n_cell_y), 1._rt/Real(n_cell_z)};
 
