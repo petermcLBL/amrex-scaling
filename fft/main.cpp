@@ -227,8 +227,8 @@ int main (int argc, char* argv[])
         auto t_amrex_auto = test_amrex_auto(domain, mf, cmf);
         auto t_amrex_pencil = test_amrex_pencil(domain, mf, cmf);
         auto t_amrex_slab = test_amrex_slab(domain, mf, cmf);
-        amrex::Print() << "  armex atuo   time: " << t_amrex_auto << "\n"
-                       << "  armex pencil time: " << t_amrex_pencil << "\n"
+        amrex::Print() << "  amrex atuo   time: " << t_amrex_auto << "\n"
+                       << "  amrex pencil time: " << t_amrex_pencil << "\n"
                        << "  amrex slab   time: " << t_amrex_slab << "\n";
 
 #ifdef USE_HEFFTE
