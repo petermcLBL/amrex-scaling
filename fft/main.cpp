@@ -8,58 +8,62 @@
 #endif
 
 #if defined(USE_FFTX)
-#include "fftxinterface.hpp"
 #include <fftx_mpi.hpp>
-#include "fftxmdprdftObj.hpp"
-#include "fftximdprdftObj.hpp"
-#include "fftxcudabackend.hpp"
-#include "fftxdevice_macros.h"
 #endif
 
 using namespace amrex;
 
 namespace {
-    constexpr int ntests = 3;
+    constexpr int ntests = 10;
+}
+
+template <typename F>
+double test_amrex (F& r2c, MultiFab& mf, cMultiFab& cmf)
+{
+    Gpu::synchronize();
+    double t00 = amrex::second();
+
+    r2c.forward(mf, cmf);
+    r2c.backward(cmf, mf);
+
+    Gpu::synchronize();
+    double t0 = amrex::second();
+
+    amrex::Print() << "    Warm-up: " << t0-t00 << "\n";
+
+    double tt = 0;
+
+    for (int itest = 0; itest < ntests; ++itest) {
+        double ta = amrex::second();
+        r2c.forward(mf, cmf);
+        r2c.backward(cmf, mf);
+        Gpu::synchronize();
+        double tb = amrex::second();
+        tt += (tb-ta);
+        amrex::Print() << "    Test # " << itest << ": " << tb-ta << "\n";
+    }
+
+    return tt / double(ntests);
+}
+
+double test_amrex_auto (Box const& domain, MultiFab& mf, cMultiFab& cmf)
+{
+    FFT::R2C<Real,FFT::Direction::both> r2c(domain);
+    return test_amrex(r2c, mf, cmf);
 }
 
 double test_amrex_pencil (Box const& domain, MultiFab& mf, cMultiFab& cmf)
 {
-    FFT::R2C<Real,FFT::Direction::both,FFT::DomainStrategy::pencil> r2c(domain);
-    r2c.forward(mf, cmf);
-    r2c.backward(cmf, mf);
-
-    Gpu::synchronize();
-    double t0 = amrex::second();
-
-    for (int itest = 0; itest < ntests; ++itest) {
-        r2c.forward(mf, cmf);
-        r2c.backward(cmf, mf);
-    }
-
-    Gpu::synchronize();
-    double t1 = amrex::second();
-
-    return (t1-t0) / double(ntests);
+    FFT::R2C<Real,FFT::Direction::both> r2c
+        (domain, FFT::Info{}.setDomainStrategy(FFT::DomainStrategy::pencil));
+    return test_amrex(r2c, mf, cmf);
 }
 
 double test_amrex_slab (Box const& domain, MultiFab& mf, cMultiFab& cmf)
 {
-    FFT::R2C<Real,FFT::Direction::both,FFT::DomainStrategy::slab> r2c(domain);
-    r2c.forward(mf, cmf);
-    r2c.backward(cmf, mf);
-
-    Gpu::synchronize();
-    double t0 = amrex::second();
-
-    for (int itest = 0; itest < ntests; ++itest) {
-        r2c.forward(mf, cmf);
-        r2c.backward(cmf, mf);
-    }
-
-    Gpu::synchronize();
-    double t1 = amrex::second();
-
-    return (t1-t0) / double(ntests);
+    FFT::R2C<Real,FFT::Direction::both> r2c
+        (domain, FFT::Info{}.setDomainStrategy(FFT::DomainStrategy::slab));
+    return test_amrex(r2c, mf, cmf);
 }
 
 #ifdef USE_HEFFTE
@@ -131,15 +135,24 @@ double test_fftx_dist (Box const& domain, MultiFab& mf, cMultiFab& cmf)
 
     // How do we fix it?
 
+    Gpu::synchronize();
+    double t00 = amrex::second();
+
     fftx_execute_1d(plan, (double*)cfab.dataPtr(), fab.dataPtr(), FFTX_DEVICE_FFT_FORWARD);
     fftx_execute_1d(plan, fab.dataPtr(), (double*)cfab.dataPtr(), FFTX_DEVICE_FFT_INVERSE);
 
     Gpu::synchronize();
     double t0 = amrex::second();
 
+    amrex::Print() << "    Warm-up: " << t0-t00 << "\n";
+
     for (int itest = 0; itest < ntests; ++itest) {
+        double ta = amrex::second();
         fftx_execute_1d(plan, (double*)cfab.dataPtr(), fab.dataPtr(), FFTX_DEVICE_FFT_FORWARD);
         fftx_execute_1d(plan, fab.dataPtr(), (double*)cfab.dataPtr(), FFTX_DEVICE_FFT_INVERSE);
+        Gpu::synchronize();
+        double tb = amrex::second();
+        amrex::Print() << "    Test # " << itest << ": " << tb-ta << "\n";
     }
 
     Gpu::synchronize();
@@ -150,45 +163,6 @@ double test_fftx_dist (Box const& domain, MultiFab& mf, cMultiFab& cmf)
     return (t1-t0) / double(ntests);
 }
 
-double test_fftx_single (Box const& domain, MultiFab& mf, cMultiFab& cmf)
-{
-    auto& fab = mf[ParallelDescriptor::MyProc()];
-    auto& cfab = cmf[ParallelDescriptor::MyProc()];
-
-    fftx::point_t<3> extent;
-    for (int d = 0; d < 3; d++)
-      {
-        extent[d] = domain.length(d);
-      }
-    fftx::box_t<3> bx( fftx::point_t<3>::Unit(), extent );
-
-    std::vector<int> sizes{extent[0], extent[1], extent[2]};
-
-    FFTX_DEVICE_PTR realTfmPtr = (FFTX_DEVICE_PTR) fab.dataPtr();
-    FFTX_DEVICE_PTR complexTfmPtr = (FFTX_DEVICE_PTR) cfab.dataPtr();
-    FFTX_DEVICE_PTR symbolTfmPtr = (FFTX_DEVICE_PTR) NULL;
-    
-    std::vector<void*> argsR2C{&complexTfmPtr, &realTfmPtr, &symbolTfmPtr};
-    std::vector<void*> argsC2R{&realTfmPtr, &complexTfmPtr, &symbolTfmPtr};
-    MDPRDFTProblem mdp(argsR2C, sizes, "mddft");
-    IMDPRDFTProblem imdp(argsC2R, sizes, "imddft");
-
-    mdp.transform();
-    imdp.transform();
-                            
-    Gpu::synchronize();
-    double t0 = amrex::second();
-
-    for (int itest = 0; itest < ntests; ++itest) {
-      mdp.transform();
-      imdp.transform();
-    }
-
-    Gpu::synchronize();
-    double t1 = amrex::second();
-
-    return (t1-t0) / double(ntests);
-}
 #endif
 
 int main (int argc, char* argv[])
@@ -240,7 +214,7 @@ int main (int argc, char* argv[])
         });
         Gpu::streamSynchronize();
 
-        Box cdomain(IntVect(0), IntVect(n_cell_x/2+1, n_cell_y-1, n_cell_z-1));
+        Box cdomain(IntVect(0), IntVect(n_cell_x/2, n_cell_y-1, n_cell_z-1));
 #if defined(USE_FFTX)
         BoxArray cba = amrex::decompose(cdomain, ParallelDescriptor::NProcs(), {false,false,true});
 #else
@@ -250,9 +224,11 @@ int main (int argc, char* argv[])
 
         cMultiFab cmf(cba, dm, 1, 0);
 
+        auto t_amrex_auto = test_amrex_auto(domain, mf, cmf);
         auto t_amrex_pencil = test_amrex_pencil(domain, mf, cmf);
         auto t_amrex_slab = test_amrex_slab(domain, mf, cmf);
-        amrex::Print() << "  armex pencil time: " << t_amrex_pencil << "\n"
+        amrex::Print() << "  armex atuo   time: " << t_amrex_auto << "\n"
+                       << "  armex pencil time: " << t_amrex_pencil << "\n"
                        << "  amrex slab   time: " << t_amrex_slab << "\n";
 
 #ifdef USE_HEFFTE
@@ -261,10 +237,8 @@ int main (int argc, char* argv[])
 #endif
 
 #ifdef USE_FFTX
-        auto t_fftx = test_fftx_dist(domain, mf, cmf);
-        amrex::Print() << "  fftx dist    time: " << t_fftx << "\n";
-        auto t_fftx1 = test_fftx_single(domain, mf, cmf);
-        amrex::Print() << "  fftx single  time: " << t_fftx1 << "\n";
+        auto t_fftx_dist = test_fftx_dist(domain, mf, cmf);
+        amrex::Print() << "  fftx dist    time: " << t_fftx_dist << "\n";
 #endif
 
         amrex::Print() << "\n";
