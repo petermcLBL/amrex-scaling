@@ -195,7 +195,7 @@ int main (int argc, char* argv[])
 
 #ifdef USE_FFTX
         auto t_fftx = test_fftx(domain, mf, mf2);
-        amrex::Print() << "  fftx dist    time: " << t_fftx << "\n";
+        amrex::Print() << "  fftx dist time: " << t_fftx << "\n";
 #endif
     }
     amrex::Finalize();
