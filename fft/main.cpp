@@ -114,6 +114,10 @@ double test_fftx_dist (Box const& domain, MultiFab& mf, cMultiFab& cmf)
     auto& fab = mf[ParallelDescriptor::MyProc()];
     auto& cfab = cmf[ParallelDescriptor::MyProc()];
 
+    amrex::Print(Print::AllProcs) << "rank " << ParallelDescriptor::MyProc()
+                                  << " real on " << fab.box()
+                                  << ", complex on " << cfab.box() << "\n";
+
     int batch = 1;
     bool is_embedded = false;
     bool is_complex = false;
@@ -197,6 +201,8 @@ int main (int argc, char* argv[])
 #else
         BoxArray ba = amrex::decompose(domain, ParallelDescriptor::NProcs(), {true,true,true});
 #endif
+        amrex::Print() << "real data on boxes " << ba << "\n";
+
         AMREX_ALWAYS_ASSERT(ba.size() == ParallelDescriptor::NProcs());
         DistributionMapping dm = FFT::detail::make_iota_distromap(ba.size());
 
@@ -220,6 +226,7 @@ int main (int argc, char* argv[])
 #else
         BoxArray cba = amrex::decompose(cdomain, ParallelDescriptor::NProcs(), {true,true,true});
 #endif
+        amrex::Print() << "complex data on boxes " << cba << "\n";
         AMREX_ALWAYS_ASSERT(cba.size() == ParallelDescriptor::NProcs());
 
         cMultiFab cmf(cba, dm, 1, 0);
@@ -227,7 +234,7 @@ int main (int argc, char* argv[])
         auto t_amrex_auto = test_amrex_auto(domain, mf, cmf);
         auto t_amrex_pencil = test_amrex_pencil(domain, mf, cmf);
         auto t_amrex_slab = test_amrex_slab(domain, mf, cmf);
-        amrex::Print() << "  amrex atuo   time: " << t_amrex_auto << "\n"
+        amrex::Print() << "  amrex auto   time: " << t_amrex_auto << "\n"
                        << "  amrex pencil time: " << t_amrex_pencil << "\n"
                        << "  amrex slab   time: " << t_amrex_slab << "\n";
 
