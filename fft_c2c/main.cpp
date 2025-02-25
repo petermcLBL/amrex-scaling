@@ -79,6 +79,21 @@ int main (int argc, char* argv[])
         AMREX_ALWAYS_ASSERT(ba.size() == ParallelDescriptor::NProcs());
         DistributionMapping dm = FFT::detail::make_iota_distromap(ba.size());
 
+        int rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        for (int ibox = 0; ibox < ParallelDescriptor::NProcs(); ibox++)
+          {
+            int rankbox = ParallelContext::global_to_local_rank(dm[ibox]);
+            if (rankbox == rank)
+              {
+                const Box& bx = ba[ibox];
+                const int* lo = bx.loVect();
+                const int* hi = bx.hiVect();
+                printf("Rank %d has box %d : [%d:%d, %d:%d, %d:%d]\n",
+                       rank, ibox, lo[0], hi[0], lo[1], hi[1], lo[2], hi[2]);
+              }
+          }
+
         GpuArray<Real,3> dx{1._rt/Real(n_cell_x), 1._rt/Real(n_cell_y), 1._rt/Real(n_cell_z)};
 
         cMultiFab mf(ba, dm, batch_size, 0);
