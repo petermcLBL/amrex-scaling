@@ -51,6 +51,67 @@ double test_amrex_auto (Box const& domain, cMultiFab const& mf, cMultiFab& mf2)
     return test_amrex(c2c, mf, mf2);
 }
 
+#ifdef USE_FFTX
+double test_fftx (Box const& domain, cMultiFab const& mf, cMultiFab& mf2)
+{
+    auto& fab = mf[ParallelDescriptor::MyProc()];
+    auto& fab2 = mf2[ParallelDescriptor::MyProc()];
+
+    amrex::Print(Print::AllProcs) << "rank " << ParallelDescriptor::MyProc()
+                                  << " fabs on boxes "
+                                  << fab.box() << " and " << fab2.box() << std::endl;
+      
+    int batch = 1;
+    bool is_embedded = false;
+    bool is_complex = true;
+    fftx_plan plan = fftx_plan_distributed_1d(MPI_COMM_WORLD,
+                                              ParallelDescriptor::NProcs(),
+                                              domain.length(0),
+                                              domain.length(1),
+                                              domain.length(2),
+                                              batch, is_embedded, is_complex);
+
+    // The code here is likely wrong, because ...
+
+    // The arrays have the Fortran column-major order. For both mf and mf2, the order is
+    // (x,y,z) and the domain decomposition is in the z-direction.
+
+    // The comments in fftx/examples/3DDFT_mpi/test3DDFT_mpi_1D.cpp seem to suggest that
+    // the output complex array has the order of (z,x,y) and the domain decompostion is in
+    // the x-direction.
+
+    // How do we fix it?
+
+    Gpu::synchronize();
+    double t00 = amrex::second();
+
+    // plan, output, input, direction
+    fftx_execute_1d(plan, (double*) fab2.dataPtr(), (double*) fab.dataPtr(), FFTX_DEVICE_FFT_FORWARD);
+    fftx_execute_1d(plan, (double*) fab.dataPtr(), (double*) fab2.dataPtr(), FFTX_DEVICE_FFT_INVERSE);
+
+    Gpu::synchronize();
+    double t0 = amrex::second();
+
+    amrex::Print() << "    Warm-up: " << t0-t00 << "\n";
+
+    for (int itest = 0; itest < ntests; ++itest) {
+        double ta = amrex::second();
+        fftx_execute_1d(plan, (double*) fab2.dataPtr(), (double*) fab.dataPtr(), FFTX_DEVICE_FFT_FORWARD);
+        fftx_execute_1d(plan, (double*) fab.dataPtr(), (double*) fab2.dataPtr(), FFTX_DEVICE_FFT_INVERSE);
+        Gpu::synchronize();
+        double tb = amrex::second();
+        amrex::Print() << "    Test # " << itest << ": " << tb-ta << "\n";
+    }
+
+    Gpu::synchronize();
+    double t1 = amrex::second();
+
+    fftx_plan_destroy(plan);
+
+    return (t1-t0) / double(ntests);
+}
+#endif
+
 int main (int argc, char* argv[])
 {
     static_assert(AMREX_SPACEDIM == 3);
@@ -83,22 +144,15 @@ int main (int argc, char* argv[])
         AMREX_ALWAYS_ASSERT(ba.size() == ParallelDescriptor::NProcs());
         DistributionMapping dm = FFT::detail::make_iota_distromap(ba.size());
 
-        int rank;
-        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         for (int ibox = 0; ibox < ParallelDescriptor::NProcs(); ibox++)
           {
-            int rankbox = ParallelContext::global_to_local_rank(dm[ibox]);
-            if (rankbox == rank)
-              {
-                const Box& bx = ba[ibox];
-                const int* lo = bx.loVect();
-                const int* hi = bx.hiVect();
-                amrex::Print() << "Rank " << rank
-                               << " has box " << ibox
-                               << "[" << lo[0] << ":" << hi[0] << ", "
-                               << "[" << lo[1] << ":" << hi[1] << ", "
-                               << "[" << lo[2] << ":" << hi[2] << "] \n"
-              }
+            const Box& bx = ba[ibox];
+            const int* lo = bx.loVect();
+            const int* hi = bx.hiVect();
+            amrex::Print() << "box " << ibox << " ["
+                           << lo[0] << ":" << hi[0] << ", "
+                           << lo[1] << ":" << hi[1] << ", "
+                           << lo[2] << ":" << hi[2] << "]\n";
           }
 
         GpuArray<Real,3> dx{1._rt/Real(n_cell_x), 1._rt/Real(n_cell_y), 1._rt/Real(n_cell_z)};
@@ -139,65 +193,10 @@ int main (int argc, char* argv[])
             amrex::Print() << "  Expected to be close to zero: " << error << "\n\n";
         }
 
-        auto_t t_fftx = test_fftx(domain, mf, mf2);
+#ifdef USE_FFTX
+        auto t_fftx = test_fftx(domain, mf, mf2);
         amrex::Print() << "  fftx dist    time: " << t_fftx << "\n";
+#endif
     }
     amrex::Finalize();
 }
-
-#ifdef USE_FFTX
-double test_fftx (Box const& domain, cMultiFab const& mf, cMultiFab& mf2)
-{
-    auto& fab = mf[ParallelDescriptor::MyProc()];
-    auto& fab2 = mf2[ParallelDescriptor::MyProc()];
-
-    int batch = 1;
-    bool is_embedded = false;
-    bool is_complex = true;
-    fftx_plan plan = fftx_plan_distributed_1d(MPI_COMM_WORLD,
-                                              ParallelDescriptor::NProcs(),
-                                              domain.length(0),
-                                              domain.length(1),
-                                              domain.length(2),
-                                              batch, is_embedded, is_complex);
-
-    // The code here is likely wrong, because ...
-
-    // The arrays have the Fortran column-major order. For both mf and mf2, the order is
-    // (x,y,z) and the domain decomposition is in the z-direction.
-
-    // The comments in fftx/examples/3DDFT_mpi/test3DDFT_mpi_1D.cpp seem to suggest that
-    // the output complex array has the order of (z,x,y) and the domain decompostion is in
-    // the x-direction.
-
-    // How do we fix it?
-
-    Gpu::synchronize();
-    double t00 = amrex::second();
-
-    // plan, output, input, direction
-    fftx_execute_1d(plan, fab2.dataPtr(), fab.dataPtr(), FFTX_DEVICE_FFT_FORWARD);
-    fftx_execute_1d(plan, fab.dataPtr(), fab2.dataPtr(), FFTX_DEVICE_FFT_INVERSE);
-
-    Gpu::synchronize();
-    double t0 = amrex::second();
-
-    amrex::Print() << "    Warm-up: " << t0-t00 << "\n";
-
-    for (int itest = 0; itest < ntests; ++itest) {
-        double ta = amrex::second();
-        fftx_execute_1d(plan, fab2.dataPtr(), fab.dataPtr(), FFTX_DEVICE_FFT_FORWARD);
-        fftx_execute_1d(plan, fab.dataPtr(), fab2.dataPtr(), FFTX_DEVICE_FFT_INVERSE);
-        Gpu::synchronize();
-        double tb = amrex::second();
-        amrex::Print() << "    Test # " << itest << ": " << tb-ta << "\n";
-    }
-
-    Gpu::synchronize();
-    double t1 = amrex::second();
-
-    fftx_plan_destroy(plan);
-
-    return (t1-t0) / double(ntests);
-}
-#endif
