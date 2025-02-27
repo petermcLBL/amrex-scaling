@@ -1,0 +1,404 @@
+Wed 26 Feb 2025 04:52:01 PM PST
+### 1 rank on 128^3
+Initializing AMReX (25.02-22-gf3e4bec9d800)...
+MPI initialized with 1 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+CUDA initialized with 1 device.
+AMReX (25.02-22-gf3e4bec9d800) initialized
+
+ FFT size: 128 128 128   # of proc. 1
+
+real data on boxes (BoxArray maxbox(1)
+       m_ref->m_hash_sig(0)
+       ((0,0,0) (127,127,127) (0,0,0)) )
+
+complex data on boxes (BoxArray maxbox(1)
+       m_ref->m_hash_sig(0)
+       ((0,0,0) (64,127,127) (0,0,0)) )
+
+    Warm-up: 0.000337592
+    Test # 0: 0.000223061
+    Test # 1: 0.000217951
+    Test # 2: 0.000221989
+    Test # 3: 0.000219714
+    Test # 4: 0.000219053
+    Test # 5: 0.000218651
+    Test # 6: 0.000218451
+    Test # 7: 0.000219224
+    Test # 8: 0.000220054
+    Test # 9: 0.000218011
+    Warm-up: 0.000230494
+    Test # 0: 0.000223541
+    Test # 1: 0.000221999
+    Test # 2: 0.000219143
+    Test # 3: 0.000221939
+    Test # 4: 0.000221457
+    Test # 5: 0.000220495
+    Test # 6: 0.000220947
+    Test # 7: 0.000221598
+    Test # 8: 0.000220806
+    Test # 9: 0.000219023
+    Warm-up: 0.000230294
+    Test # 0: 0.000219764
+    Test # 1: 0.000218732
+    Test # 2: 0.00021772
+    Test # 3: 0.000218111
+    Test # 4: 0.000221768
+    Test # 5: 0.000218692
+    Test # 6: 0.000218201
+    Test # 7: 0.000218311
+    Test # 8: 0.000221107
+    Test # 9: 0.000220165
+  amrex auto   time: 0.0002196159
+  amrex pencil time: 0.0002210948
+  amrex slab   time: 0.0002192571
+rank 0 real on ((0,0,0) (127,127,127) (0,0,0)), complex on ((0,0,0) (64,127,127) (0,0,0))
+    Warm-up: 0.640643812
+    Test # 0: 0.001318395
+    Test # 1: 0.001294579
+    Test # 2: 0.001306381
+    Test # 3: 0.001298536
+    Test # 4: 0.001285902
+    Test # 5: 0.001297124
+    Test # 6: 0.001294649
+    Test # 7: 0.001292755
+    Test # 8: 0.001293777
+    Test # 9: 0.001292765
+  fftx dist    time: 0.0013054394
+
+Total GPU global memory (MB) spread across MPI: [40326 ... 40326]
+Free  GPU global memory (MB) spread across MPI: [9438 ... 9438]
+[The         Arena] space (MB) allocated spread across MPI: [30244 ... 30244]
+[The         Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The Managed Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The  Pinned Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The   Comms Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The   Comms Arena] space (MB) used      spread across MPI: [0 ... 0]
+AMReX (25.02-22-gf3e4bec9d800) finalized
+### 2 ranks on 128^3 use_gpu_aware_mpi=0
+Initializing AMReX (25.02-22-gf3e4bec9d800)...
+MPI initialized with 2 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+Multiple GPUs are visible to each MPI rank. Fixing GPU assignment for Perlmuuter according to heuristics.
+CUDA initialized with 2 devices.
+AMReX (25.02-22-gf3e4bec9d800) initialized
+
+ FFT size: 128 128 128   # of proc. 2
+
+real data on boxes (BoxArray maxbox(2)
+       m_ref->m_hash_sig(0)
+       ((0,0,0) (127,127,63) (0,0,0)) ((0,0,64) (127,127,127) (0,0,0)) )
+
+complex data on boxes (BoxArray maxbox(2)
+       m_ref->m_hash_sig(0)
+       ((0,0,0) (64,127,63) (0,0,0)) ((0,0,64) (64,127,127) (0,0,0)) )
+
+    Warm-up: 0.008816084
+    Test # 0: 0.003421183
+    Test # 1: 0.003427445
+    Test # 2: 0.003406615
+    Test # 3: 0.003418177
+    Test # 4: 0.003399251
+    Test # 5: 0.003403289
+    Test # 6: 0.003397357
+    Test # 7: 0.003399601
+    Test # 8: 0.003415702
+    Test # 9: 0.003410291
+    Warm-up: 0.007799092
+    Test # 0: 0.003716703
+    Test # 1: 0.003754336
+    Test # 2: 0.003696524
+    Test # 3: 0.00372023
+    Test # 4: 0.003745899
+    Test # 5: 0.003738826
+    Test # 6: 0.003722935
+    Test # 7: 0.003742252
+    Test # 8: 0.00468408
+    Test # 9: 0.003748966
+    Warm-up: 0.003423467
+    Test # 0: 0.003392717
+    Test # 1: 0.003422314
+    Test # 2: 0.003425701
+    Test # 3: 0.003427605
+    Test # 4: 0.003432184
+    Test # 5: 0.003412075
+    Test # 6: 0.003417566
+    Test # 7: 0.003425402
+    Test # 8: 0.003416694
+    Test # 9: 0.003420652
+  amrex auto   time: 0.0034098911
+  amrex pencil time: 0.0038270751
+  amrex slab   time: 0.003419291
+rank 0 real on ((0,0,0) (127,127,63) (0,0,0)), complex on ((0,0,0) (64,127,63) (0,0,0))
+rank 1 real on ((0,0,64) (127,127,127) (0,0,0)), complex on ((0,0,64) (64,127,127) (0,0,0))
+    Warm-up: 0.607904366
+    Test # 0: 0.001577144
+    Test # 1: 0.001363131
+    Test # 2: 0.00147151
+    Test # 3: 0.001374222
+    Test # 4: 0.001371106
+    Test # 5: 0.00136778
+    Test # 6: 0.001371937
+    Test # 7: 0.001376316
+    Test # 8: 0.001368351
+    Test # 9: 0.001368581
+  fftx dist    time: 0.0014092548
+
+Total GPU global memory (MB) spread across MPI: [40326 ... 40326]
+Free  GPU global memory (MB) spread across MPI: [9078 ... 9482]
+[The         Arena] space (MB) allocated spread across MPI: [30244 ... 30244]
+[The         Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The Managed Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] space (MB) allocated spread across MPI: [16 ... 16]
+[The  Pinned Arena] space (MB) used      spread across MPI: [0 ... 0]
+AMReX (25.02-22-gf3e4bec9d800) finalized
+### 2 ranks on 128^3 use_gpu_aware_mpi=1
+Initializing AMReX (25.02-22-gf3e4bec9d800)...
+MPI initialized with 2 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+Multiple GPUs are visible to each MPI rank. Fixing GPU assignment for Perlmuuter according to heuristics.
+CUDA initialized with 2 devices.
+AMReX (25.02-22-gf3e4bec9d800) initialized
+
+ FFT size: 128 128 128   # of proc. 2
+
+real data on boxes (BoxArray maxbox(2)
+       m_ref->m_hash_sig(0)
+       ((0,0,0) (127,127,63) (0,0,0)) ((0,0,64) (127,127,127) (0,0,0)) )
+
+complex data on boxes (BoxArray maxbox(2)
+       m_ref->m_hash_sig(0)
+       ((0,0,0) (64,127,63) (0,0,0)) ((0,0,64) (64,127,127) (0,0,0)) )
+
+    Warm-up: 0.002971225
+    Test # 0: 0.001309938
+    Test # 1: 0.001297334
+    Test # 2: 0.001288327
+    Test # 3: 0.001297154
+    Test # 4: 0.001297224
+    Test # 5: 0.001314988
+    Test # 6: 0.001316751
+    Test # 7: 0.001411054
+    Test # 8: 0.001313134
+    Test # 9: 0.001294749
+    Warm-up: 0.005758143
+    Test # 0: 0.001534351
+    Test # 1: 0.001422506
+    Test # 2: 0.00134771
+    Test # 3: 0.001351448
+    Test # 4: 0.001349004
+    Test # 5: 0.001346739
+    Test # 6: 0.001338443
+    Test # 7: 0.001352359
+    Test # 8: 0.001351919
+    Test # 9: 0.001344936
+    Warm-up: 0.001324917
+    Test # 0: 0.001310118
+    Test # 1: 0.001314607
+    Test # 2: 0.001302053
+    Test # 3: 0.001300009
+    Test # 4: 0.001307072
+    Test # 5: 0.00130574
+    Test # 6: 0.001309737
+    Test # 7: 0.001305199
+    Test # 8: 0.001334606
+    Test # 9: 0.001291913
+  amrex auto   time: 0.0013140653
+  amrex pencil time: 0.0013739415
+  amrex slab   time: 0.0013081054
+rank 0 real on ((0,0,0) (127,127,63) (0,0,0)), complex on ((0,0,0) (64,127,63) (0,0,0))
+rank 1 real on ((0,0,64) (127,127,127) (0,0,0)), complex on ((0,0,64) (64,127,127) (0,0,0))
+    Warm-up: 0.609216028
+    Test # 0: 0.001517339
+    Test # 1: 0.001370074
+    Test # 2: 0.001382889
+    Test # 3: 0.001369684
+    Test # 4: 0.001366658
+    Test # 5: 0.001353693
+    Test # 6: 0.001381526
+    Test # 7: 0.001364083
+    Test # 8: 0.001377728
+    Test # 9: 0.001561684
+  fftx dist    time: 0.0014132966
+
+Total GPU global memory (MB) spread across MPI: [40326 ... 40326]
+Free  GPU global memory (MB) spread across MPI: [9062 ... 9466]
+[The         Arena] space (MB) allocated spread across MPI: [30244 ... 30244]
+[The         Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The Managed Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The  Pinned Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The   Comms Arena] space (MB) allocated spread across MPI: [16 ... 16]
+[The   Comms Arena] space (MB) used      spread across MPI: [0 ... 0]
+AMReX (25.02-22-gf3e4bec9d800) finalized
+### 4 ranks on 128^3 use_gpu_aware_mpi=0
+Initializing AMReX (25.02-22-gf3e4bec9d800)...
+MPI initialized with 4 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+Multiple GPUs are visible to each MPI rank. Fixing GPU assignment for Perlmuuter according to heuristics.
+CUDA initialized with 4 devices.
+AMReX (25.02-22-gf3e4bec9d800) initialized
+
+ FFT size: 128 128 128   # of proc. 4
+
+real data on boxes (BoxArray maxbox(4)
+       m_ref->m_hash_sig(0)
+       ((0,0,0) (127,127,31) (0,0,0)) ((0,0,32) (127,127,63) (0,0,0)) ((0,0,64) (127,127,95) (0,0,0)) ((0,0,96) (127,127,127) (0,0,0)) )
+
+complex data on boxes (BoxArray maxbox(4)
+       m_ref->m_hash_sig(0)
+       ((0,0,0) (64,127,31) (0,0,0)) ((0,0,32) (64,127,63) (0,0,0)) ((0,0,64) (64,127,95) (0,0,0)) ((0,0,96) (64,127,127) (0,0,0)) )
+
+    Warm-up: 0.012783481
+    Test # 0: 0.00273549
+    Test # 1: 0.002672237
+    Test # 2: 0.002665875
+    Test # 3: 0.002666436
+    Test # 4: 0.00264745
+    Test # 5: 0.002681505
+    Test # 6: 0.002632611
+    Test # 7: 0.002665264
+    Test # 8: 0.002685182
+    Test # 9: 0.002660474
+    Warm-up: 0.004493592
+    Test # 0: 0.003720911
+    Test # 1: 0.003793241
+    Test # 2: 0.003767061
+    Test # 3: 0.003724167
+    Test # 4: 0.003723025
+    Test # 5: 0.00374648
+    Test # 6: 0.003722775
+    Test # 7: 0.003707595
+    Test # 8: 0.003789974
+    Test # 9: 0.003739297
+    Warm-up: 0.002681936
+    Test # 0: 0.002631238
+    Test # 1: 0.002651728
+    Test # 2: 0.002674581
+    Test # 3: 0.002715401
+    Test # 4: 0.00266852
+    Test # 5: 0.002646528
+    Test # 6: 0.00263206
+    Test # 7: 0.002697166
+    Test # 8: 0.002658691
+    Test # 9: 0.002681035
+rank 1 real on ((0,0,32) (127,127,63) (0,0,0)), complex on ((0,0,32) (64,127,63) (0,0,0))
+  amrex auto   time: 0.0026712524
+  amrex pencil time: 0.0037434526
+  amrex slab   time: 0.0026656948
+rank 0 real on ((0,0,0) (127,127,31) (0,0,0)), complex on ((0,0,0) (64,127,31) (0,0,0))
+rank 2 real on ((0,0,64) (127,127,95) (0,0,0)), complex on ((0,0,64) (64,127,95) (0,0,0))
+rank 3 real on ((0,0,96) (127,127,127) (0,0,0)), complex on ((0,0,96) (64,127,127) (0,0,0))
+    Warm-up: 0.553759017
+    Test # 0: 0.001043935
+    Test # 1: 0.001066979
+    Test # 2: 0.001218141
+    Test # 3: 0.001003727
+    Test # 4: 0.001028245
+    Test # 5: 0.00103595
+    Test # 6: 0.001044877
+    Test # 7: 0.001120543
+    Test # 8: 0.001064315
+    Test # 9: 0.001024748
+  fftx dist    time: 0.0010734438
+
+Total GPU global memory (MB) spread across MPI: [40326 ... 40326]
+Free  GPU global memory (MB) spread across MPI: [8245 ... 9506]
+[The         Arena] space (MB) allocated spread across MPI: [30244 ... 30244]
+[The         Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The Managed Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The  Pinned Arena] space (MB) used      spread across MPI: [0 ... 0]
+AMReX (25.02-22-gf3e4bec9d800) finalized
+### 4 ranks on 128^3 use_gpu_aware_mpi=1
+Initializing AMReX (25.02-22-gf3e4bec9d800)...
+MPI initialized with 4 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+Multiple GPUs are visible to each MPI rank. Fixing GPU assignment for Perlmuuter according to heuristics.
+CUDA initialized with 4 devices.
+AMReX (25.02-22-gf3e4bec9d800) initialized
+
+ FFT size: 128 128 128   # of proc. 4
+
+real data on boxes (BoxArray maxbox(4)
+       m_ref->m_hash_sig(0)
+       ((0,0,0) (127,127,31) (0,0,0)) ((0,0,32) (127,127,63) (0,0,0)) ((0,0,64) (127,127,95) (0,0,0)) ((0,0,96) (127,127,127) (0,0,0)) )
+
+complex data on boxes (BoxArray maxbox(4)
+       m_ref->m_hash_sig(0)
+       ((0,0,0) (64,127,31) (0,0,0)) ((0,0,32) (64,127,63) (0,0,0)) ((0,0,64) (64,127,95) (0,0,0)) ((0,0,96) (64,127,127) (0,0,0)) )
+
+    Warm-up: 0.003887542
+    Test # 0: 0.001084503
+    Test # 1: 0.001028275
+    Test # 2: 0.001158957
+    Test # 3: 0.001085124
+    Test # 4: 0.000965233
+    Test # 5: 0.001025309
+    Test # 6: 0.001051859
+    Test # 7: 0.00098445
+    Test # 8: 0.000960904
+    Test # 9: 0.000930996
+    Warm-up: 0.001631488
+    Test # 0: 0.001421704
+    Test # 1: 0.001405463
+    Test # 2: 0.001364333
+    Test # 3: 0.00158589
+    Test # 4: 0.00142521
+    Test # 5: 0.001687196
+    Test # 6: 0.001488353
+    Test # 7: 0.001402947
+    Test # 8: 0.001640215
+    Test # 9: 0.001437384
+    Warm-up: 0.001180799
+    Test # 0: 0.001090384
+    Test # 1: 0.001071518
+    Test # 2: 0.001048824
+    Test # 3: 0.001088
+    Test # 4: 0.000981945
+    Test # 5: 0.001118879
+    Test # 6: 0.001071417
+    Test # 7: 0.001078962
+    Test # 8: 0.001018145
+    Test # 9: 0.000965233
+  amrex auto   time: 0.001027561
+  amrex pencil time: 0.0014858695
+  amrex slab   time: 0.0010533307
+rank 0 real on ((0,0,0) (127,127,31) (0,0,0)), complex on ((0,0,0) (64,127,31) (0,0,0))
+rank 1 real on ((0,0,32) (127,127,63) (0,0,0)), complex on ((0,0,32) (64,127,63) (0,0,0))
+rank 3 real on ((0,0,96) (127,127,127) (0,0,0)), complex on ((0,0,96) (64,127,127) (0,0,0))
+rank 2 real on ((0,0,64) (127,127,95) (0,0,0)), complex on ((0,0,64) (64,127,95) (0,0,0))
+    Warm-up: 0.537095896
+    Test # 0: 0.001282034
+    Test # 1: 0.000981975
+    Test # 2: 0.001016842
+    Test # 3: 0.00105715
+    Test # 4: 0.001016842
+    Test # 5: 0.001009789
+    Test # 6: 0.001023154
+    Test # 7: 0.001033846
+    Test # 8: 0.001018245
+    Test # 9: 0.001028876
+  fftx dist    time: 0.0010553145
+
+Total GPU global memory (MB) spread across MPI: [40326 ... 40326]
+Free  GPU global memory (MB) spread across MPI: [8237 ... 9498]
+[The         Arena] space (MB) allocated spread across MPI: [30244 ... 30244]
+[The         Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The Managed Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The  Pinned Arena] space (MB) used      spread across MPI: [0 ... 0]
+[The   Comms Arena] space (MB) allocated spread across MPI: [8 ... 8]
+[The   Comms Arena] space (MB) used      spread across MPI: [0 ... 0]
+AMReX (25.02-22-gf3e4bec9d800) finalized

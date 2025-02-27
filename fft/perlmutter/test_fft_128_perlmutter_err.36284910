@@ -1,0 +1,8 @@
+[nid002276:100189] shmem: mmap: an error occurred while determining whether or not /tmp/spmix_appdir_13791_36284910.1/shared_mem_cuda_pool.nid002276 could be created.
+[nid002276:100189] create_and_attach: unable to create shared memory BTL coordinating structure :: size 134217728 
+[nid002276:100253] shmem: mmap: an error occurred while determining whether or not /tmp/spmix_appdir_13791_36284910.2/shared_mem_cuda_pool.nid002276 could be created.
+[nid002276:100253] create_and_attach: unable to create shared memory BTL coordinating structure :: size 134217728 
+[nid002276:100364] shmem: mmap: an error occurred while determining whether or not /tmp/spmix_appdir_13791_36284910.3/shared_mem_cuda_pool.nid002276 could be created.
+[nid002276:100364] create_and_attach: unable to create shared memory BTL coordinating structure :: size 134217728 
+[nid002276:100474] shmem: mmap: an error occurred while determining whether or not /tmp/spmix_appdir_13791_36284910.4/shared_mem_cuda_pool.nid002276 could be created.
+[nid002276:100474] create_and_attach: unable to create shared memory BTL coordinating structure :: size 134217728 
