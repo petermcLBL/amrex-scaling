@@ -1,0 +1,12 @@
+[nid001992:886665] shmem: mmap: an error occurred while determining whether or not /tmp/spmix_appdir_13791_36284952.1/shared_mem_cuda_pool.nid001992 could be created.
+[nid001992:886665] create_and_attach: unable to create shared memory BTL coordinating structure :: size 134217728 
+There are more MPI processes than the number of unique GPU devices. This is not necessarily a problem.
+For example this could happen when a device such as MI300A is partitioned into multiple subdevices.!
+[nid001992:886748] shmem: mmap: an error occurred while determining whether or not /tmp/spmix_appdir_13791_36284952.2/shared_mem_cuda_pool.nid001992 could be created.
+[nid001992:886748] create_and_attach: unable to create shared memory BTL coordinating structure :: size 134217728 
+There are more MPI processes than the number of unique GPU devices. This is not necessarily a problem.
+For example this could happen when a device such as MI300A is partitioned into multiple subdevices.!
+[nid001992:886811] shmem: mmap: an error occurred while determining whether or not /tmp/spmix_appdir_13791_36284952.3/shared_mem_cuda_pool.nid001992 could be created.
+[nid001992:886811] create_and_attach: unable to create shared memory BTL coordinating structure :: size 134217728 
+[nid001992:886945] shmem: mmap: an error occurred while determining whether or not /tmp/spmix_appdir_13791_36284952.4/shared_mem_cuda_pool.nid001992 could be created.
+[nid001992:886945] create_and_attach: unable to create shared memory BTL coordinating structure :: size 134217728 
